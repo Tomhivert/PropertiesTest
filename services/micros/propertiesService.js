@@ -8,7 +8,9 @@ module.exports = function (app) {
 
     router.get('/', propertiesHandler.getProperty);
     router.post('/', propertiesHandler.createProperty);
-    router.post('/:propertyid/add-record', propertiesHandler.addRecord)
+    router.post('/:propertyid/record', propertiesHandler.addRecord);
+    router.get('/:propertyid/record', propertiesHandler.getRecords);
+    router.get('/:propertyid/balance', propertiesHandler.getPropertyBalance);
 
     app.use('/properties', router);
 }
