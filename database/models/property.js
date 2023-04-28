@@ -12,7 +12,6 @@ var PropertySchema = new mongoose.Schema({
     balance: {
         type: Number,
         require: false,
-        minlength: 6,
         default: 0
     },
 });
