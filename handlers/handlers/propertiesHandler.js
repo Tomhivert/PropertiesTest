@@ -2,34 +2,26 @@ const { Property } = require('../../database/models/property');
 const { Record } = require('../../database/models/record');
 const _ = require('lodash');
 
-const getProperty = async (req,res) => {
+const getProperty = async () => {
     const props = await Property.find(() => {})
 
-    res.status(200).send(props);
+    return props;
 }
 
-const getPropertyBalance = async (req,res) => {
-    const propertyId = req.params.propertyid;
+const getPropertyBalance = async (propertyId) => {
     const property = await Property.findById(propertyId);
-    res.status(200).send({ balance: property.balance });
+    return { balance: property.balance };
 }
 
-const createProperty = async (req,res) => {
-    const body = _.pick(req.body, ['name']);
-    var prop = new Property(body);
+const createProperty = async (name) => {
+    var prop = new Property({name: name});
     const savedProp = await prop.save();
 
-    res.status(200).send(savedProp.toString());
+    return savedProp.toString();
 }
 
-const addRecord = async (req, res) => {
-    const propertyId = req.params.propertyid;
-    const body = _.pick(req.body, ['amount', 'type']);
-    const amount = body.amount;
-    const recordType = body.type;
-
+const addRecord = async (propertyId, amount, recordType) => {
     const amountAsNumber = Number.parseInt(amount);
-
     const property = await Property.findById(propertyId);
 
     if (property) {
@@ -45,30 +37,25 @@ const addRecord = async (req, res) => {
         property.balance = endingBalance;
         await property.save();
 
-        record = new Record({
+        const record = new Record({
             property: propertyId,
             amount: amount,
             startingBalance,
             endingBalance,
             date: Date.now(),
-            type: body.type
+            type: recordType
         })
         await record.save();
 
-        return res.status(200).send(record);
+        return record;
     }
 
-    res.status(400).send('No property found by that ID');
+    return null;
 }
 
-const getRecords = async (req, res) => {
-    const propertyId = req.params.propertyid;
-    const queryParams = _.pick(req.query, ['amount', 'type', 'dateFrom', 'dateTo', 'order']);
-    const searchObject = _.pick(queryParams, ['amount', 'type', 'property'])
-    const dateFrom = queryParams.dateFrom;
-    const dateTo = queryParams.dateTo;
-    const order = queryParams.order;
+const getRecords = async (propertyId, queryParams, dateFrom, dateTo, order) => {
     const dateObject = {};
+    const searchObject = _.pick(queryParams, ['amount', 'type', 'property'])
     if (dateFrom) {
         dateObject.$gte = queryParams.dateFrom;
     }
@@ -80,18 +67,11 @@ const getRecords = async (req, res) => {
         searchObject.date = dateObject;
     }
     searchObject.property = propertyId;
-    try {
-        const records = await Record.find(searchObject).sort({date: order});
-        return res.status(200).send(records);
-    } catch (error) {
-        console.log(error)
-        return res.status(500).send(error);
-    }
+    const records = await Record.find(searchObject).sort({date: order});
+    return records;
 }
 
-const getReport = async (req, res) => {
-    const month = req.params.month;
-    const propertyId = req.params.propertyid;
+const getReport = async (propertyId, month) => {
     const currentDate = new Date(Date.now());
     const year = currentDate.getFullYear();
     const day = 1;
@@ -106,7 +86,7 @@ const getReport = async (req, res) => {
 
     const relevantRecords = await Record.find({property: propertyId, date: dateSearchObject}).sort({date: 1});
     if (!relevantRecords || relevantRecords.length === 0) {
-        return res.status(200).send("No results found");
+        return "No results found";
     }
     let resultString = "";
     let balance = 0;
@@ -130,7 +110,7 @@ const getReport = async (req, res) => {
     }
 
     resultString = resultString.concat(`Ending balance: ${balance}\n`);
-    return res.status(200).send(resultString);
+    return resultString;
 }
 
 module.exports = {
