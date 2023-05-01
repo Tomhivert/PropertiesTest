@@ -11,6 +11,7 @@ module.exports = function (app) {
     router.post('/:propertyid/record', propertiesHandler.addRecord);
     router.get('/:propertyid/record', propertiesHandler.getRecords);
     router.get('/:propertyid/balance', propertiesHandler.getPropertyBalance);
+    router.get('/:propertyid/get-report/:month', propertiesHandler.getReport);
 
     app.use('/properties', router);
 }
