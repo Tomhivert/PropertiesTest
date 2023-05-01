@@ -2,7 +2,7 @@ const { Property } = require('../../database/models/property');
 const { Record } = require('../../database/models/record');
 const _ = require('lodash');
 
-const getProperty = async () => {
+const getProperties = async () => {
     const props = await Property.find(() => {})
 
     return props;
@@ -114,7 +114,7 @@ const getReport = async (propertyId, month) => {
 }
 
 module.exports = {
-    getProperty,
+    getProperties,
     getPropertyBalance,
     createProperty,
     addRecord,

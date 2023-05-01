@@ -7,9 +7,9 @@ const propetriesController = require('../../controllers/propertiesController');
 module.exports = function (app) {
     const router = express.Router();
 
-    router.get('/', propetriesController.getProperty);
     router.post('/', propetriesController.createProperty);
     router.post('/:propertyid/record', propetriesController.addRecord);
+    router.get('/', propetriesController.getProperties);
     router.get('/:propertyid/record', propetriesController.getRecords);
     router.get('/:propertyid/balance', propetriesController.getPropertyBalance);
     router.get('/:propertyid/get-report/:month', propetriesController.getReport);

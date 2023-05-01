@@ -73,9 +73,9 @@ const getPropertyBalance = async (req,res) => {
     }
 }
 
-const getProperty = async (req,res) => {
+const getProperties = async (req,res) => {
     try {
-        const result = await propertiesHandler.getProperty();
+        const result = await propertiesHandler.getProperties();
         if (result) {
             res.status(200).send(result);
         }
@@ -87,7 +87,7 @@ const getProperty = async (req,res) => {
 
 
 module.exports = {
-    getProperty,
+    getProperties,
     getPropertyBalance,
     createProperty,
     addRecord,
